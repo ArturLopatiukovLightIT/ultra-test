@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  ultra_backend:
+    container_name: ultra_test_api
+    build: ./
+    links:
+      - ultra_database
+    depends_on:
+      - ultra_database
+    ports:
+      - "8080:8080"
+      - "9229:9229"
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PWD: ${DB_PWD}
+      DB_HOST: 'ultra_database'
+      API_PORT: '8080'
+
+  ultra_database:
+    env_file: ./.env
+    container_name: ultra_db
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - ultra_database_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PWD}
+
+volumes:
+  ultra_database_volume:
